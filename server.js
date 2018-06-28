@@ -21,6 +21,12 @@ app.get('/reg/a?:b', (req, res) => {
     res.send('abcd')
 })
 
+// 查询字符串
+app.get('/string', (req, res) => {
+    const query = req.query
+    res.send(query)
+})
+
 app.listen(3000)
 console.log('listening to port 3000')
 
