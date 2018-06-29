@@ -1,8 +1,32 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const fs = require('fs')
+const multer =require('multer')
 
 const app = express()
-// app.use(bodyParser.json())
+
+const createFolder = (folder) => {
+    try {
+        fs.accessSync(folder);
+    } catch (e) {
+        fs.mkdirSync(folder);
+    }
+};
+
+const uploadFolder = './uploads/';
+
+createFolder(uploadFolder)
+
+const storage = multer.diskStorage({
+    destination(req, file, cb){
+        cb(null, uploadFolder)
+    },
+    filename(req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({storage})
+
 
 // 固定路由
 app.get('/', (req, res) => {
@@ -33,6 +57,15 @@ app.get('/string', (req, res) => {
 app.post('/', bodyParser.json(), (req, res) => {
     console.dir(req.body)
     res.send(req.body)
+})
+
+// 文件上传
+app.get('/form', (req, res) => {
+    const form = fs.readFileSync('./upload.html', {encoding: 'utf8'})
+    res.send(form)
+})
+app.post('/upload', upload.single('logo'), (req, res) => {
+    res.send({'ret_code': 0})
 })
 
 app.listen(3000)
