@@ -1,6 +1,8 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 
 const app = express()
+// app.use(bodyParser.json())
 
 // 固定路由
 app.get('/', (req, res) => {
@@ -25,6 +27,12 @@ app.get('/reg/a?:b', (req, res) => {
 app.get('/string', (req, res) => {
     const query = req.query
     res.send(query)
+})
+
+// post请求
+app.post('/', bodyParser.json(), (req, res) => {
+    console.dir(req.body)
+    res.send(req.body)
 })
 
 app.listen(3000)
