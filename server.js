@@ -5,28 +5,6 @@ const multer =require('multer')
 
 const app = express()
 
-const createFolder = (folder) => {
-    try {
-        fs.accessSync(folder);
-    } catch (e) {
-        fs.mkdirSync(folder);
-    }
-};
-
-const uploadFolder = './uploads/';
-
-createFolder(uploadFolder)
-
-const storage = multer.diskStorage({
-    destination(req, file, cb){
-        cb(null, uploadFolder)
-    },
-    filename(req, file, cb) {
-        cb(null, file.originalname)
-    }
-})
-const upload = multer({storage})
-
 
 // 固定路由
 app.get('/', (req, res) => {
@@ -59,13 +37,41 @@ app.post('/', bodyParser.json(), (req, res) => {
     res.send(req.body)
 })
 
+
 // 文件上传
+const createFolder = (folder) => {
+    try {
+        fs.accessSync(folder)
+    } catch (e) {
+        fs.mkdirSync(folder)
+    }
+}
+const uploadFolder = './uploads/'
+
+createFolder(uploadFolder)
+
+const storage = multer.diskStorage({
+    destination(req, file, cb){
+        cb(null, uploadFolder)
+    },
+    filename(req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({storage})
 app.get('/form', (req, res) => {
     const form = fs.readFileSync('./upload.html', {encoding: 'utf8'})
     res.send(form)
 })
 app.post('/upload', upload.single('logo'), (req, res) => {
     res.send({'ret_code': 0})
+})
+
+// 模板引擎
+app.set('view engine', 'ejs')
+app.get('/ejs/:name', (req, res) => {
+    const person = req.params.name
+    res.render('ejs', {person})
 })
 
 app.listen(3000)
