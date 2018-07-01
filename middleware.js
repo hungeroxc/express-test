@@ -18,7 +18,15 @@ const app = express()
 // })
 
 // 中间件响应静态文件
-app.use(express.static('public'))
+// app.use(express.static('public'))
 
+// 路由中间件
+const router = express.Router()
+
+const a = router.get('/bbb', (req, res, next) => {
+    res.send('root')
+})
+
+app.use('/aaa', a)
 
 app.listen(3000)
