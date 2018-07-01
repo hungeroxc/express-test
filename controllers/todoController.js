@@ -1,5 +1,7 @@
-const bodyParser = requrie('body-parser')
-const data = [
+const bodyParser = require('body-parser')
+const urlencodeParser = bodyParser.urlencoded({extended: false})
+
+let data = [
     {
         item: 'get milk'
     },
@@ -16,12 +18,18 @@ module.exports = app => {
         res.render('todo', {todos: data})
     })
 
-    app.post('/todo', (req, res) => {
-        console.log(req)
+    app.post('/todo', urlencodeParser, (req, res) => {
+        data.push(req.body)
+        res.json(data)
     })
 
-    app.delete('/todo', (req, res) => {
+    app.delete('/todo/:item', (req, res) => {
         
+        data = data.filter(todo => {
+            const list = todo.item.replace(/ /g, "-") !== req.params.item
+            return list
+        })
+        res.json(data)
     })
 } 
 
